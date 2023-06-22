@@ -17,7 +17,9 @@ int main( void )
 
     while(1){
 
-         printf("Enter a state (1-6): \n 1 = Forward \n 2 = Left  \n 3 = Right \n 4 = Reverse  \n 5 = Collect balls  \n 6 = stop  \n 7 = smide balls \n 8 = Collect from frame \n");
+         printf("Enter a state (1-6): \n 1 = Forward \n 2 = Left  \n 3 = Right 
+\n 4 = Reverse  \n 5 = stop  
+\n 6 = smide balls \n 7 = Sensor \n 8 = fan \n");
          scanf("%d", &state);
 
 
@@ -60,26 +62,15 @@ int main( void )
                 brick_uninit();
                 break;
 
-            case 5:
-                 printf("Collect balls \n");
-                brick_init();
-                tacho_set_speed_sp( OUTC, -1*tacho_get_max_speed( OUTC, 0 ));
-                tacho_run_forever(  OUTC );
-                sleep_ms( 3000 );  // 2 sec
-                tacho_stop( OUTC );
-                brick_uninit();
-                break;
                 
-            case 6:
+            case 5:
                 brick_init();          
                 tacho_stop( OUTA | OUTB | OUTC);
                 brick_uninit();
 
-            default:
-                printf("Invalid state entered\n");
-                break;
+
 	
-	        case 7:
+	        case 6:
             
                 printf("Smide balls \n");
                 brick_init();
@@ -90,7 +81,7 @@ int main( void )
                 brick_uninit();
                 break;   
             
-            case 8:
+            case 7:
     	printf("SENSOR!! \n");
                 ev3_sensor_init();
                 brick_init();
@@ -114,7 +105,7 @@ int main( void )
                 break;
 
                            
-            case 9: 
+            case 8: 
      
             printf("BLAESER!!!! \n");
             brick_init();
@@ -132,7 +123,7 @@ int main( void )
 	   break;
 
  
-            case 10:
+            case 9:
                 printf("Forward \n");
                 brick_init();
 
@@ -141,6 +132,10 @@ int main( void )
                 brick_uninit(); 
 
                 break;    
+	default:
+                printf("Invalid state entered\n");
+                break;
+
         }
 
     }
