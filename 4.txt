@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include "coroutine.h"
+#include "brick.h"
+#define MOTOR_LEFT         OUTA
+#define MOTOR_RIGHT        OUTB
+#define MOTOR_TACHO        OUTC
+
+
+
+int main( void )
+{
+    int state;
+    int run_time;
+    int val;
+    uint32_t  i;
+    uint8_t sn_ir;
+
+    while(1){
+
+         printf("Enter a state (1-6): \n 1 = Forward \n 2 = Left  \n 3 = Right \n 4 = Reverse  \n 5 = Collect balls  \n 6 = stop  \n 7 = smide balls \n 8 = Collect from frame \n");
+         scanf("%d", &state);
+
+
+        switch(state) {
+            case 1:
+                printf("Forward \n");
+                brick_init();
+
+                tacho_set_speed_sp( OUTA |  OUTB, tacho_get_max_speed( OUTB, 0 )*0.70);
+                tacho_set_speed_sp( OUTC, -1*tacho_get_max_speed( OUTC, 0 )*0.20);
+                tacho_run_forever(  OUTA | OUTB | OUTC );
+                brick_uninit(); 
+
+                break;
+
+
+            case 2:
+                printf("Turn left\n");
+                brick_init();
+                tacho_set_speed_sp(OUTB, tacho_get_max_speed(OUTB, 0)*0.20);
+                tacho_set_speed_sp(OUTA, -1 * tacho_get_max_speed(OUTB, 0)*0.20);
+                tacho_run_forever(OUTA | OUTB);
+                brick_uninit();
+    		    break;
+ 		
+            case 3:
+                printf("Turn right\n");
+                brick_init();
+                tacho_set_speed_sp(OUTA, tacho_get_max_speed(OUTA, 0)*0.20);
+                tacho_set_speed_sp(OUTB, -1 * tacho_get_max_speed(OUTB, 0)*0.20);
+                tacho_run_forever(OUTA | OUTB);
+                brick_uninit();
+                break;
+        
+            case 4:
+                printf("Reverse\n");
+                brick_init();
+                tacho_set_speed_sp( OUTA | OUTB, -1000 );
+                tacho_run_forever(  OUTA | OUTB);
+                brick_uninit();
+                break;
+
+            case 5:
+                 printf("Collect balls \n");
+                brick_init();
+                tacho_set_speed_sp( OUTC, -1*tacho_get_max_speed( OUTC, 0 ));
+                tacho_run_forever(  OUTC );
+                sleep_ms( 3000 );  // 2 sec
+                tacho_stop( OUTC );
+                brick_uninit();
+                break;
+                
+            case 6:
+                brick_init();          
+                tacho_stop( OUTA | OUTB | OUTC);
+                brick_uninit();
+
+            default:
+                printf("Invalid state entered\n");
+                break;
+	
+	        case 7:
+            
+                printf("Smide balls \n");
+                brick_init();
+                tacho_set_speed_sp( OUTC, tacho_get_max_speed( OUTC, 0 )*0.15);
+                tacho_run_forever(  OUTC );
+                sleep_ms( 3000 );  // 2 sec
+                tacho_stop( OUTC );
+                brick_uninit();
+                break;   
+            
+            case 8:
+    	printf("SENSOR!! \n");
+                ev3_sensor_init();
+                brick_init();
+
+                tacho_set_speed_sp( OUTA | OUTB, tacho_get_max_speed( OUTB, 0 ) );
+                tacho_run_forever(  OUTA | OUTB );
+
+                while(1){
+		
+                    if ( get_sensor_value( 0, sn_ir, &val )) {
+                        printf("  value = %d\n",  val);
+                    }
+                    if(val <210){
+                        tacho_stop( OUTA | OUTB );
+                    }
+                }
+
+                brick_uninit();
+                ev3_uninit();
+
+                break;
+
+                           
+            case 9: 
+     
+            printf("BLAESER!!!! \n");
+            brick_init();
+	        tacho_set_speed_sp( OUTD, tacho_get_max_speed( OUTD, 0 )*0.35);
+	        tacho_run_forever(  OUTD );
+	        sleep_ms( 200 );  
+                tacho_stop( OUTD );
+	        sleep_ms(3000);
+
+            tacho_set_speed_sp(OUTD, -1* tacho_get_max_speed(OUTD, 0)*0.35);
+	   	 tacho_run_forever(OUTD);
+  	     sleep_ms(200);
+            tacho_stop(OUTD);
+	    brick_uninit();
+	   break;
+
+ 
+            case 10:
+                printf("Forward \n");
+                brick_init();
+
+                tacho_set_speed_sp( OUTA |  OUTB, tacho_get_max_speed( OUTB, 0 )*0.70);
+                tacho_run_forever(  OUTA | OUTB );
+                brick_uninit(); 
+
+                break;    
+        }
+
+    }
+
+}
